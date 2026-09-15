@@ -1,6 +1,245 @@
+{% doc %}
+  @prompt
+    An interactive vertical timeline that highlights as the user scrolls
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-timeline-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+    color: {{ block.settings.text_color }};
+    font-family: var(--bs-body-font-family, sans-serif);
+  }
+
+  .ai-timeline-{{ ai_gen_id }}__header {
+    margin-bottom: 2.5rem;
+    text-align: {{ block.settings.alignment }};
+  }
+
+  .ai-timeline-{{ ai_gen_id }}__heading {
+    margin: 0 0 0.75rem;
+    color: {{ block.settings.heading_color }};
+    font-family: var(--bs-headings-font-family, sans-serif);
+    font-size: {{ block.settings.heading_size }}px;
+    line-height: 1.15;
+  }
+
+  .ai-timeline-{{ ai_gen_id }}__intro {
+    max-width: 680px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .ai-timeline-{{ ai_gen_id }}__track {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0.5rem 0;
+  }
+
+  .ai-timeline-{{ ai_gen_id }}__track::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 18px;
+    width: 2px;
+    background: {{ block.settings.line_color }};
+  }
+
+  .ai-timeline-{{ ai_gen_id }}__progress {
+    position: absolute;
+    top: 0;
+    left: 18px;
+    width: 2px;
+    height: 0;
+    background: {{ block.settings.accent_color }};
+    transition: height 0.25s ease-out;
+  }
+
+  .ai-timeline-{{ ai_gen_id }}__item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 38px 1fr;
+    gap: 1.25rem;
+    min-height: 150px;
+    padding-bottom: 2.5rem;
+  }
+
+  .ai-timeline-{{ ai_gen_id }}__item:last-child {
+    min-height: 0;
+    padding-bottom: 0;
+  }
+
+  .ai-timeline-{{ ai_gen_id }}__marker {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 2px solid {{ block.settings.line_color }};
+    border-radius: 50%;
+    background: {{ block.settings.background_color }};
+    color: {{ block.settings.muted_color }};
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .ai-timeline-{{ ai_gen_id }}__item.is-active .ai-timeline-{{ ai_gen_id }}__marker {
+    border-color: {{ block.settings.accent_color }};
+    background: {{ block.settings.accent_color }};
+    color: #ffffff;
+  }
+
+  .ai-timeline-{{ ai_gen_id }}__content {
+    padding: 0.35rem 0 1rem;
+    opacity: 0.55;
+    transition: opacity 0.2s ease;
+  }
+
+  .ai-timeline-{{ ai_gen_id }}__item.is-active .ai-timeline-{{ ai_gen_id }}__content,
+  .ai-timeline-{{ ai_gen_id }}__item:focus-within .ai-timeline-{{ ai_gen_id }}__content {
+    opacity: 1;
+  }
+
+  .ai-timeline-{{ ai_gen_id }}__eyebrow {
+    margin: 0 0 0.4rem;
+    color: {{ block.settings.accent_color }};
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ai-timeline-{{ ai_gen_id }}__title {
+    margin: 0 0 0.55rem;
+    color: {{ block.settings.heading_color }};
+    font-family: var(--bs-headings-font-family, sans-serif);
+    font-size: {{ block.settings.item_title_size }}px;
+    line-height: 1.25;
+  }
+
+  .ai-timeline-{{ ai_gen_id }}__text {
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-timeline-{{ ai_gen_id }}__heading { font-size: calc({{ block.settings.heading_size }}px * 0.82); }
+    .ai-timeline-{{ ai_gen_id }}__item { gap: 1rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ai-timeline-{{ ai_gen_id }}__marker,
+    .ai-timeline-{{ ai_gen_id }}__content,
+    .ai-timeline-{{ ai_gen_id }}__progress { transition: none; }
+  }
+{% endstyle %}
+
+<scroll-timeline-{{ ai_gen_id }} class="ai-timeline-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-timeline-{{ ai_gen_id }}__header">
+    {% if block.settings.heading != blank %}<h2 class="ai-timeline-{{ ai_gen_id }}__heading">{{ block.settings.heading | escape }}</h2>{% endif %}
+    {% if block.settings.intro != blank %}<div class="ai-timeline-{{ ai_gen_id }}__intro">{{ block.settings.intro }}</div>{% endif %}
+  </div>
+  <div class="ai-timeline-{{ ai_gen_id }}__track">
+    <div class="ai-timeline-{{ ai_gen_id }}__progress" aria-hidden="true"></div>
+    {% for i in (1..4) %}
+      {% liquid
+        assign enabled_key = 'item_' | append: i | append: '_enabled'
+        assign eyebrow_key = 'item_' | append: i | append: '_eyebrow'
+        assign title_key = 'item_' | append: i | append: '_title'
+        assign text_key = 'item_' | append: i | append: '_text'
+      %}
+      {% if block.settings[enabled_key] %}
+        <article class="ai-timeline-{{ ai_gen_id }}__item">
+          <div class="ai-timeline-{{ ai_gen_id }}__marker" aria-hidden="true">{{ i }}</div>
+          <div class="ai-timeline-{{ ai_gen_id }}__content">
+            {% if block.settings[eyebrow_key] != blank %}<p class="ai-timeline-{{ ai_gen_id }}__eyebrow">{{ block.settings[eyebrow_key] | escape }}</p>{% endif %}
+            <h3 class="ai-timeline-{{ ai_gen_id }}__title">{{ block.settings[title_key] | escape }}</h3>
+            {% if block.settings[text_key] != blank %}<div class="ai-timeline-{{ ai_gen_id }}__text">{{ block.settings[text_key] }}</div>{% endif %}
+          </div>
+        </article>
+      {% endif %}
+    {% endfor %}
+  </div>
+</scroll-timeline-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ScrollTimeline{{ ai_gen_id }} extends HTMLElement {
+      connectedCallback() {
+        this.items = Array.from(this.querySelectorAll('.ai-timeline-{{ ai_gen_id }}__item'));
+        this.progress = this.querySelector('.ai-timeline-{{ ai_gen_id }}__progress');
+        if (!this.items.length) return;
+        this.observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) entry.target.classList.add('is-active');
+          });
+        }, { rootMargin: '-35% 0px -45% 0px', threshold: 0 });
+        this.items.forEach((item) => this.observer.observe(item));
+        this.updateProgress = this.updateProgress.bind(this);
+        window.addEventListener('scroll', this.updateProgress, { passive: true });
+        this.updateProgress();
+      }
+      updateProgress() {
+        const rect = this.querySelector('.ai-timeline-{{ ai_gen_id }}__track').getBoundingClientRect();
+        const viewportPoint = window.innerHeight * 0.45;
+        const amount = Math.max(0, Math.min(rect.height, viewportPoint - rect.top));
+        this.progress.style.height = amount + 'px';
+      }
+      disconnectedCallback() {
+        if (this.observer) this.observer.disconnect();
+        window.removeEventListener('scroll', this.updateProgress);
+      }
+    }
+    if (!customElements.get('scroll-timeline-{{ ai_gen_id }}')) customElements.define('scroll-timeline-{{ ai_gen_id }}', ScrollTimeline{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Scroll timeline",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Our story" },
+    { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p>Explore the milestones that shaped our journey.</p>" },
+    { "type": "radio", "id": "alignment", "label": "Alignment", "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }], "default": "center" },
+    { "type": "header", "content": "Timeline items" },
+    { "type": "checkbox", "id": "item_1_enabled", "label": "Show item 1", "default": true },
+    { "type": "text", "id": "item_1_eyebrow", "label": "Item 1 label", "default": "2019" },
+    { "type": "text", "id": "item_1_title", "label": "Item 1 title", "default": "A simple beginning" },
+    { "type": "richtext", "id": "item_1_text", "label": "Item 1 text", "default": "<p>We began with a clear idea and a commitment to quality.</p>" },
+    { "type": "checkbox", "id": "item_2_enabled", "label": "Show item 2", "default": true },
+    { "type": "text", "id": "item_2_eyebrow", "label": "Item 2 label", "default": "2021" },
+    { "type": "text", "id": "item_2_title", "label": "Item 2 title", "default": "Growing together" },
+    { "type": "richtext", "id": "item_2_text", "label": "Item 2 text", "default": "<p>Our community helped us grow and refine every detail.</p>" },
+    { "type": "checkbox", "id": "item_3_enabled", "label": "Show item 3", "default": true },
+    { "type": "text", "id": "item_3_eyebrow", "label": "Item 3 label", "default": "2024" },
+    { "type": "text", "id": "item_3_title", "label": "Item 3 title", "default": "A broader vision" },
+    { "type": "richtext", "id": "item_3_text", "label": "Item 3 text", "default": "<p>We expanded our vision while keeping our original values at the centre.</p>" },
+    { "type": "checkbox", "id": "item_4_enabled", "label": "Show item 4", "default": true },
+    { "type": "text", "id": "item_4_eyebrow", "label": "Item 4 label", "default": "Today" },
+    { "type": "text", "id": "item_4_title", "label": "Item 4 title", "default": "What comes next" },
+    { "type": "richtext", "id": "item_4_text", "label": "Item 4 text", "default": "<p>We are continuing to build what is next, one thoughtful step at a time.</p>" },
+    { "type": "header", "content": "Style" },
+    { "type": "range", "id": "desktop_width_percent", "label": "Desktop width", "min": 50, "max": 100, "step": 5, "unit": "%", "default": 100 },
+    { "type": "range", "id": "heading_size", "label": "Heading size", "min": 20, "max": 56, "step": 2, "unit": "px", "default": 36 },
+    { "type": "range", "id": "item_title_size", "label": "Item title size", "min": 16, "max": 32, "step": 2, "unit": "px", "default": 22 },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#ffffff" },
+    { "type": "color", "id": "heading_color", "label": "Headings", "default": "#212529" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#212529" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#0d6efd" },
+    { "type": "color", "id": "line_color", "label": "Line", "default": "#ced4da" },
+    { "type": "color", "id": "muted_color", "label": "Muted text", "default": "#455a64" }
+  ],
+  "presets": [{ "name": "Scroll timeline" }],
+  "tag": null,
+  "class": "scroll-timeline-block"
+}
 {% endschema %}
