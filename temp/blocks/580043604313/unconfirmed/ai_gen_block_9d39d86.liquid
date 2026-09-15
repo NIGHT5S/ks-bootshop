@@ -1,6 +1,265 @@
+{% doc %}
+  @prompt
+    clean hero slider
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-hero-slider-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    position: relative;
+    overflow: hidden;
+    background: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__track {
+    display: flex;
+    transition: transform 350ms ease;
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__slide {
+    min-width: 100%;
+    position: relative;
+    display: flex;
+    align-items: {{ block.settings.content_position }};
+    min-height: {{ block.settings.hero_height }}px;
+    isolation: isolate;
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__image,
+  .ai-hero-slider-{{ ai_gen_id }}__placeholder {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__placeholder {
+    background: {{ block.settings.background_color }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__placeholder svg {
+    width: 45%;
+    height: 45%;
+    opacity: .25;
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__overlay {
+    position: absolute;
+    inset: 0;
+    background: {{ block.settings.overlay_color }};
+    opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};
+    z-index: -1;
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__content {
+    width: min(100% - 48px, 680px);
+    margin: 0 auto;
+    padding: 56px 0;
+    color: {{ block.settings.text_color }};
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__eyebrow {
+    margin: 0 0 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__title {
+    margin: 0 0 14px;
+    color: inherit;
+    font-family: {{ block.settings.heading_font.family }};
+    font-size: clamp(2rem, 5vw, {{ block.settings.heading_size }}px);
+    line-height: 1.05;
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__text {
+    margin: 0 auto 24px;
+    max-width: 560px;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border: 1px solid {{ block.settings.button_color }};
+    border-radius: {{ block.settings.button_radius }}px;
+    background: {{ block.settings.button_color }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__button:focus-visible,
+  .ai-hero-slider-{{ ai_gen_id }}__control:focus-visible {
+    outline: 3px solid {{ block.settings.focus_color }};
+    outline-offset: 3px;
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__control {
+    position: absolute;
+    top: 50%;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: {{ block.settings.control_color }};
+    color: {{ block.settings.control_text_color }};
+    cursor: pointer;
+    transform: translateY(-50%);
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__control--previous { left: 16px; }
+  .ai-hero-slider-{{ ai_gen_id }}__control--next { right: 16px; }
+
+  .ai-hero-slider-{{ ai_gen_id }}__dots {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    display: flex;
+    gap: 8px;
+    transform: translateX(-50%);
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__dot {
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border: 1px solid {{ block.settings.control_text_color }};
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .ai-hero-slider-{{ ai_gen_id }}__dot[aria-current="true"] { background: {{ block.settings.control_text_color }}; }
+
+  @media screen and (max-width: 749px) {
+    .ai-hero-slider-{{ ai_gen_id }}__slide { min-height: {{ block.settings.mobile_height }}px; }
+    .ai-hero-slider-{{ ai_gen_id }}__content { width: min(100% - 40px, 680px); padding: 40px 0; }
+    .ai-hero-slider-{{ ai_gen_id }}__control { width: 34px; height: 34px; }
+  }
+{% endstyle %}
+
+<hero-slider-{{ ai_gen_id }} class="ai-hero-slider-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-hero-slider-{{ ai_gen_id }}__track" data-track>
+    {% for i in (1..3) %}
+      {% liquid
+        assign image_key = 'slide_' | append: i | append: '_image'
+        assign eyebrow_key = 'slide_' | append: i | append: '_eyebrow'
+        assign title_key = 'slide_' | append: i | append: '_title'
+        assign text_key = 'slide_' | append: i | append: '_text'
+        assign button_key = 'slide_' | append: i | append: '_button'
+        assign link_key = 'slide_' | append: i | append: '_link'
+        assign image = block.settings[image_key]
+      %}
+      <div class="ai-hero-slider-{{ ai_gen_id }}__slide" data-slide aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}">
+        {% if image %}
+          <img class="ai-hero-slider-{{ ai_gen_id }}__image" src="{{ image | image_url: width: 2000 }}" alt="{{ image.alt | escape }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" width="{{ image.width }}" height="{{ image.height }}">
+        {% else %}
+          <div class="ai-hero-slider-{{ ai_gen_id }}__placeholder">{{ 'hero-apparel-1' | placeholder_svg_tag }}</div>
+        {% endif %}
+        <div class="ai-hero-slider-{{ ai_gen_id }}__overlay"></div>
+        <div class="ai-hero-slider-{{ ai_gen_id }}__content">
+          {% if block.settings[eyebrow_key] != blank %}<p class="ai-hero-slider-{{ ai_gen_id }}__eyebrow">{{ block.settings[eyebrow_key] }}</p>{% endif %}
+          {% if block.settings[title_key] != blank %}<h2 class="ai-hero-slider-{{ ai_gen_id }}__title">{{ block.settings[title_key] }}</h2>{% endif %}
+          {% if block.settings[text_key] != blank %}<div class="ai-hero-slider-{{ ai_gen_id }}__text">{{ block.settings[text_key] }}</div>{% endif %}
+          {% if block.settings[button_key] != blank and block.settings[link_key] != blank %}<a class="ai-hero-slider-{{ ai_gen_id }}__button" href="{{ block.settings[link_key] }}">{{ block.settings[button_key] }}</a>{% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <button class="ai-hero-slider-{{ ai_gen_id }}__control ai-hero-slider-{{ ai_gen_id }}__control--previous" type="button" aria-label="Previous slide" data-previous>‹</button>
+  <button class="ai-hero-slider-{{ ai_gen_id }}__control ai-hero-slider-{{ ai_gen_id }}__control--next" type="button" aria-label="Next slide" data-next>›</button>
+  <div class="ai-hero-slider-{{ ai_gen_id }}__dots" role="tablist" aria-label="Hero slides">
+    {% for i in (1..3) %}<button class="ai-hero-slider-{{ ai_gen_id }}__dot" type="button" role="tab" aria-label="Go to slide {{ i }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}" data-dot="{{ forloop.index0 }}"></button>{% endfor %}
+  </div>
+</hero-slider-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class HeroSlider{{ ai_gen_id }} extends HTMLElement {
+      connectedCallback() {
+        this.track = this.querySelector('[data-track]');
+        this.slides = [...this.querySelectorAll('[data-slide]')];
+        this.dots = [...this.querySelectorAll('[data-dot]')];
+        this.index = 0;
+        this.querySelector('[data-previous]').addEventListener('click', () => this.goTo(this.index - 1));
+        this.querySelector('[data-next]').addEventListener('click', () => this.goTo(this.index + 1));
+        this.dots.forEach((dot) => dot.addEventListener('click', () => this.goTo(Number(dot.dataset.dot))));
+      }
+      goTo(index) {
+        this.index = (index + this.slides.length) % this.slides.length;
+        this.track.style.transform = 'translateX(-' + (this.index * 100) + '%)';
+        this.slides.forEach((slide, position) => slide.setAttribute('aria-hidden', position === this.index ? 'false' : 'true'));
+        this.dots.forEach((dot, position) => dot.setAttribute('aria-current', position === this.index ? 'true' : 'false'));
+      }
+    }
+    if (!customElements.get('hero-slider-{{ ai_gen_id }}')) customElements.define('hero-slider-{{ ai_gen_id }}', HeroSlider{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Clean hero slider",
+  "tag": null,
+  "class": "clean-hero-slider",
+  "settings": [
+    {"type":"header","content":"Layout"},
+    {"type":"range","id":"desktop_width_percent","label":"Desktop width","min":50,"max":100,"step":5,"unit":"%","default":100},
+    {"type":"range","id":"hero_height","label":"Desktop height","min":300,"max":800,"step":50,"unit":"px","default":550},
+    {"type":"range","id":"mobile_height","label":"Mobile height","min":280,"max":650,"step":10,"unit":"px","default":480},
+    {"type":"select","id":"content_position","label":"Content position","options":[{"value":"flex-start","label":"Top"},{"value":"center","label":"Center"},{"value":"flex-end","label":"Bottom"}],"default":"center"},
+    {"type":"radio","id":"text_alignment","label":"Text alignment","options":[{"value":"left","label":"Left"},{"value":"center","label":"Center"}],"default":"center"},
+    {"type":"font_picker","id":"heading_font","label":"Heading font","default":"sans-serif"},
+    {"type":"range","id":"heading_size","label":"Heading size","min":28,"max":80,"step":4,"unit":"px","default":52},
+    {"type":"header","content":"Slide 1"},
+    {"type":"image_picker","id":"slide_1_image","label":"Image"},
+    {"type":"text","id":"slide_1_eyebrow","label":"Eyebrow","default":"New collection"},
+    {"type":"text","id":"slide_1_title","label":"Title","default":"Elevate your everyday"},
+    {"type":"textarea","id":"slide_1_text","label":"Text","default":"Thoughtfully selected essentials with a clean, premium finish."},
+    {"type":"text","id":"slide_1_button","label":"Button","default":"Shop now"},
+    {"type":"url","id":"slide_1_link","label":"Link"},
+    {"type":"header","content":"Slide 2"},
+    {"type":"image_picker","id":"slide_2_image","label":"Image"},
+    {"type":"text","id":"slide_2_eyebrow","label":"Eyebrow","default":"Bestsellers"},
+    {"type":"text","id":"slide_2_title","label":"Title","default":"Made for your routine"},
+    {"type":"textarea","id":"slide_2_text","label":"Text","default":"Discover customer favourites, selected for quality and comfort."},
+    {"type":"text","id":"slide_2_button","label":"Button","default":"Explore"},
+    {"type":"url","id":"slide_2_link","label":"Link"},
+    {"type":"header","content":"Slide 3"},
+    {"type":"image_picker","id":"slide_3_image","label":"Image"},
+    {"type":"text","id":"slide_3_eyebrow","label":"Eyebrow","default":"Discover more"},
+    {"type":"text","id":"slide_3_title","label":"Title","default":"Find your next favourite"},
+    {"type":"textarea","id":"slide_3_text","label":"Text","default":"Browse our latest arrivals and build a collection that feels like you."},
+    {"type":"text","id":"slide_3_button","label":"Button","default":"View products"},
+    {"type":"url","id":"slide_3_link","label":"Link"},
+    {"type":"header","content":"Colors"},
+    {"type":"color","id":"background_color","label":"Background","default":"#f8f9fa"},
+    {"type":"color","id":"overlay_color","label":"Overlay","default":"#000000"},
+    {"type":"range","id":"overlay_opacity","label":"Overlay opacity","min":0,"max":80,"step":5,"unit":"%","default":25},
+    {"type":"color","id":"text_color","label":"Text","default":"#ffffff"},
+    {"type":"color","id":"button_color","label":"Button","default":"#0d6efd"},
+    {"type":"color","id":"button_text_color","label":"Button text","default":"#ffffff"},
+    {"type":"color","id":"control_color","label":"Controls","default":"#ffffff"},
+    {"type":"color","id":"control_text_color","label":"Control icons","default":"#212529"},
+    {"type":"color","id":"focus_color","label":"Focus outline","default":"#ffffff"},
+    {"type":"range","id":"border_radius","label":"Corner radius","min":0,"max":20,"step":2,"unit":"px","default":6},
+    {"type":"range","id":"button_radius","label":"Button radius","min":0,"max":20,"step":2,"unit":"px","default":4}
+  ],
+  "presets": [{"name":"Clean hero slider"}]
+}
 {% endschema %}
