@@ -437,60 +437,51 @@
         "pb": 0
       }
     },
-    "17894766864b355bda": {
+    "1789484051d278fd9a": {
       "type": "_blocks",
       "blocks": {
-        "ai_gen_block_9d39d86_6wj3in": {
-          "type": "ai_gen_block_9d39d86",
+        "ai_gen_block_76aedd3_CMBVa8": {
+          "type": "ai_gen_block_76aedd3",
           "settings": {
+            "heading": "Our story",
+            "intro": "<p>Explore the milestones that shaped our journey.</p>",
+            "alignment": "center",
+            "item_1_enabled": true,
+            "item_1_eyebrow": "2019",
+            "item_1_title": "A simple beginning",
+            "item_1_text": "<p>We began with a clear idea and a commitment to quality.</p>",
+            "item_2_enabled": true,
+            "item_2_eyebrow": "2021",
+            "item_2_title": "Growing together",
+            "item_2_text": "<p>Our community helped us grow and refine every detail.</p>",
+            "item_3_enabled": true,
+            "item_3_eyebrow": "2024",
+            "item_3_title": "A broader vision",
+            "item_3_text": "<p>We expanded our vision while keeping our original values at the centre.</p>",
+            "item_4_enabled": true,
+            "item_4_eyebrow": "Today",
+            "item_4_title": "What comes next",
+            "item_4_text": "<p>We are continuing to build what is next, one thoughtful step at a time.</p>",
             "desktop_width_percent": 100,
-            "hero_height": 550,
-            "mobile_height": 480,
-            "content_position": "center",
-            "text_alignment": "center",
-            "heading_font": "system_ui_n4",
-            "heading_size": 52,
-            "slide_1_image": "shopify://shop_images/Photoroom_20260823_24614_pm.png",
-            "slide_1_eyebrow": "New collection",
-            "slide_1_title": "Elevate your everyday",
-            "slide_1_text": "Thoughtfully selected essentials with a clean, premium finish.",
-            "slide_1_button": "Shop now",
-            "slide_1_link": "",
-            "slide_2_image": "shopify://shop_images/Photoroom_20260823_24614_pm.png",
-            "slide_2_eyebrow": "Bestsellers",
-            "slide_2_title": "Made for your routine",
-            "slide_2_text": "Discover customer favourites, selected for quality and comfort.",
-            "slide_2_button": "Explore",
-            "slide_2_link": "",
-            "slide_3_image": "shopify://shop_images/Photoroom_20260823_24614_pm.png",
-            "slide_3_eyebrow": "Discover more",
-            "slide_3_title": "Find your next favourite",
-            "slide_3_text": "Browse our latest arrivals and build a collection that feels like you.",
-            "slide_3_button": "View products",
-            "slide_3_link": "",
-            "background_color": "#f8f9fa",
-            "overlay_color": "#000000",
-            "overlay_opacity": 25,
-            "text_color": "#ffffff",
-            "button_color": "#0d6efd",
-            "button_text_color": "#ffffff",
-            "control_color": "#ffffff",
-            "control_text_color": "#212529",
-            "focus_color": "#ffffff",
-            "border_radius": 6,
-            "button_radius": 4
+            "heading_size": 36,
+            "item_title_size": 22,
+            "background_color": "#ffffff",
+            "heading_color": "#212529",
+            "text_color": "#212529",
+            "accent_color": "#0d6efd",
+            "line_color": "#ced4da",
+            "muted_color": "#455a64"
           },
           "blocks": {}
         }
       },
       "block_order": [
-        "ai_gen_block_9d39d86_6wj3in"
+        "ai_gen_block_76aedd3_CMBVa8"
       ],
       "settings": {}
     }
   },
   "order": [
-    "17894766864b355bda",
     "separator_kTLAEC",
     "featured_products_nXJKQn",
     "featured_collections_n3Br7m",
@@ -499,6 +490,7 @@
     "testimonials_eFtnyC",
     "faq_7TT7z4",
     "blog_slider_UUweWT",
-    "separator_pMbxtB"
+    "separator_pMbxtB",
+    "1789484051d278fd9a"
   ]
 }

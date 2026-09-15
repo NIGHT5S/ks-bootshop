@@ -54,8 +54,8 @@
           "settings": {
             "font_size": "fs-lg",
             "badge_discount_type": "percentage",
-            "pt": 0,
-            "pb": 3
+            "pt": 3,
+            "pb": 2
           }
         },
         "4566c39b-0f51-4900-b193-a0ac76bf0c8f": {
